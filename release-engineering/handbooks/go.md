@@ -90,9 +90,22 @@ https://github.com/kubernetes/test-infra/blob/master/config/jobs/image-pushing/k
   - indicate the image, a link to the staging run, signature ( e.g. "Signed off by : Stephen Augustus saugustus@example.com"), CC @kubernetes/release-engineering & relevant reviewers
   - the structure of the file is structured by the digests' SHAs
 
+Fork & clone https://github.com/kubernetes-sigs/k8s-container-image-promoter
+
+Run: bazel run --workspace_status_command=~/go/src/sigs.k8s.io/k8s-container-image-promoter/workspace_status.sh --host_force_python=PY2 //:cip -- -snapshot=http://gcr.io/k8s-staging-build-image -output-format=YAML > images-cross.yaml
+which dumps a map of the digests that match that tag. 
+- Get the digest (from the kube-cross manifest list, not the architecture one)
+- Propose it as  a PR (e.g. "build image: Promote kube-cross:v1.xx.x-1") @ kubernetes/k8s.io
+- Go to testgrid
+
 ## k8s-cloud-builder image
+- the image that we use to do staging & release for Kubernetes
+- make sure minor versions and patch versions of Go match the kube-cross image, so we do the bumps together.
 
 ## `kubernetes/kubernetes` updates
+- Some of the tests depend on the Go version, and the existing Go resources have to match the version we are trying to bump
+- e.g. Update Go bazel rules (@ kubernetes/repo-infra)
+- 
 
 ### `master` branch updates
 
